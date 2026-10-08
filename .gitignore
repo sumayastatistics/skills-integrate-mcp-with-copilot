@@ -41,3 +41,7 @@ __pycache__
 
 # Env files
 .env
+
+# Local teacher credentials and session signing key
+/src/teachers.json
+/src/.session_secret

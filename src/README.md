@@ -5,7 +5,10 @@ A super simple FastAPI application that allows students to view and sign up for 
 ## Features
 
 - View all available extracurricular activities
-- Sign up for activities
+- View activity participants and remaining capacity
+- Teacher sign-in to manage student sign-ups and unregister students
+
+Activity viewing remains public. Only signed-in teachers can change enrollment.
 
 ## Getting Started
 
@@ -15,13 +18,19 @@ A super simple FastAPI application that allows students to view and sign up for 
    pip install fastapi uvicorn
    ```
 
-2. Run the application:
+2. Assign a password to each teacher from the `src` directory. Passwords must be at least 12 characters and are stored as salted hashes in a local, git-ignored `teachers.json` file:
+
+   ```
+   python manage_teachers.py add teachername
+   ```
+
+3. Run the application:
 
    ```
    python app.py
    ```
 
-3. Open your browser and go to:
+4. Open your browser and go to:
    - API documentation: http://localhost:8000/docs
    - Alternative documentation: http://localhost:8000/redoc
 
@@ -30,7 +39,13 @@ A super simple FastAPI application that allows students to view and sign up for 
 | Method | Endpoint                                                          | Description                                                         |
 | ------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
 | GET    | `/activities`                                                     | Get all activities with their details and current participant count |
-| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity                                             |
+| GET    | `/auth/me`                                                        | Check whether the current browser has a teacher session              |
+| POST   | `/auth/login`                                                      | Sign in as a teacher                                                 |
+| POST   | `/auth/logout`                                                     | Sign out the current teacher                                         |
+| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Teacher-only student sign-up                                         |
+| DELETE | `/activities/{activity_name}/unregister?email=student@mergington.edu` | Teacher-only unregister                                          |
+
+The app creates a local `.session_secret` file on first use to sign teacher sessions. It is git-ignored. For deployment, set a strong `SESSION_SECRET` and set `COOKIE_SECURE=true` when serving over HTTPS.
 
 ## Data Model
 
